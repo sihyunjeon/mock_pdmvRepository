@@ -1,0 +1,5 @@
+{
+    "beamEnergy": "6500",
+    "pythiaTune": "CP5",
+    "genproductions": "https://github.com/sihyunjeon/genproductions/archive/refs/tags/2022-01-13.tar.gz"
+}

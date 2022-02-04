@@ -59,8 +59,8 @@
 #***********************************************************************
  1   = lpp1    ! beam 1 type (0 = no PDF)
  1   = lpp2    ! beam 2 type (0 = no PDF)
- $EBEAM1   = ebeam1  ! beam 1 energy in GeV
- $EBEAM2   = ebeam2  ! beam 2 energy in GeV
+ 6500   = ebeam1  ! beam 1 energy in GeV
+ 6500   = ebeam2  ! beam 2 energy in GeV
 #***********************************************************************
 # PDF choice: this automatically fixes also alpha_s(MZ) and its evol.  *
 #***********************************************************************
@@ -71,7 +71,7 @@
 # shower (HERWIG6 | HERWIGPP | PYTHIA6Q | PYTHIA6PT | PYTHIA8)         *
 # WARNING: PYTHIA6PT works only for processes without FSR!!!!          *
 #***********************************************************************
-  $PARTON_SHOWER   = parton_shower
+  pythia8  = parton_shower
   1.0 = shower_scale_factor ! multiply default shower starting
                                   ! scale by this factor
 #***********************************************************************
@@ -114,7 +114,7 @@
 #      MG5_aMC available, but available in Pythia8.                    *
 #  -1: NNLL+NLO jet-veto computation. See arxiv:1412.8408 [hep-ph].    *
 #***********************************************************************
- $ICKKW        = ickkw
+ 3   = ickkw
 #***********************************************************************
 #
 #***********************************************************************
@@ -170,5 +170,5 @@
 ## Maximal PDG code for quark to be considered a jet when applying cuts.*
 ## At least all massless quarks of the model should be included here.   *
 ##***********************************************************************
- $MAXJETFLAVOR = maxjetflavor
+ 5 = maxjetflavor
 # #***********************************************************************

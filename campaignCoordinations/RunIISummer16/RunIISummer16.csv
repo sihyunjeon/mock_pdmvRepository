@@ -1,0 +1,16 @@
+process,setting,generator,nevents,directory
+DYJets,inclusive,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,inclusive,madgraphMLM-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-50to100,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-100to200,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-200to500,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-500to1000,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-1000to3000,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,Mll-3000toInf,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,0J,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,1J,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,2J,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+WJets,inclusive,amcatnloFXFX-pythia8,1000000,MadGraph5_aMCatNLO
+WW,inclusive,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+WW,LNuLNu,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+WW,LNuQQ,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
