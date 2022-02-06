@@ -105,17 +105,23 @@ def prepareWrapper():
     wrapper = open("gridpack_PdmV.sh", "w")
 
     genproductions = campaignObject["genproductions"]
-    genproductionsLink = f"https://github.com/sihyunjeon/genproductions/archive/refs/tags/{genproductions}.tar.gz"
+    genproductionsLink = f"https://github.com/cms-sw/genproductions/archive/refs/tags/{genproductions}.tar.gz"
 
     wrapper.write("#!/usr/bin/env bash\n")
+    wrapper.write("export HOME=`pwd`\n")
     wrapper.write(f"wget {genproductionsLink} \n")
     wrapper.write(f"tar -xf {genproductions}.tar.gz\n")
     wrapper.write(f"rm {genproductions}.tar.gz\n")
-    wrapper.write(f"mv cardsPdmV.tar.xz genproductions-{genproductions}/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write(f"mv genproductions-{genproductions} genproductions\n")
+    wrapper.write(f"mv cardsPdmV.tar.xz genproductions/bin/MadGraph5_aMCatNLO/\n")
     wrapper.write("rm cardsPdmV.tar.xz\n")
-    wrapper.write(f"cd genproductions-{genproductions}/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write("cd genproductions\n")
+    wrapper.write("git init\n")
+    wrapper.write(f"cd bin/MadGraph5_aMCatNLO/\n")
     wrapper.write("tar -xf cardsPdmV.tar.xz\n")
-    wrapper.write(f"./gridpack_generation.sh {datasetName} {datasetName}\n")
+    wrapper.write("mkdir cardsPdmV\n")
+    wrapper.write(f"mv {datasetName} cardsPdmV/\n")
+    wrapper.write(f"./gridpack_generation.sh {datasetName} cardsPdmV/{datasetName}\n")
     wrapper.write(f"mv {datasetName}*.xz ../../../\n")
     wrapper.close()
 
