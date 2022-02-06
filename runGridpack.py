@@ -74,28 +74,57 @@ def prepareRunCard():
 
 def prepareCustomizeCard():
 
+    customizecardPath = os.path.join(datasetName, f"{datasetName}_customizecards.dat")
+
     schemeCard = generatorObject["scheme"]
     schemecardPath = os.path.join(templatePath, "scheme", schemeCard)
-    os.system(f"cat {schemecardPath} > {datasetName}/{datasetName}_customizecards.dat")
 
-    customizecardPath = os.path.join(datasetPath, f"{datasetName}_customizecards.dat")
+    os.system(f"cat {schemecardPath} > {customizecardPath}")
 
-    os.system(f"cat {schemecardPath} > {datasetName}/{datasetName}_customizecards.dat")
+    os.system(f"echo \"\"  >> {customizecardPath}")
+    os.system(f"echo \"# User settings\" >> {customizecardPath}")
     for l in generatorObject["user"]:
-        os.system(f"echo {l} >> {datasetName}/{datasetName}_customizecards.dat")
+        os.system(f"echo {l} >> {customizecardPath}")
 
 def prepareWrapper():
 
-    genproductions = jsonObject["genproductions"]
-    os.system(f"wget {genproductions}")
-    
+    os.system(f"tar -czvf cardsPdmV.tar.gz {datasetName}")
 
+    wrapper = open("gridpack_PdmV.sh", "w")
+
+    genproductions = campaignObject["genproductions"]
+
+    wrapper.write("#!/usr/bin/env bash")
+    wrapper.write(f"wget {genproductions}\n")
+    wrapper.write(f"tar -xvf {genproductions}\n")
+    wrapper.write("mv cardsPdmV.tar.gz genproductions/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write("cd genproductions/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write("tar -xvf cardsPdmV.tar.gz\n")
+    wrapper.write(f"./gridpack_generation.sh {datasetName} {datasetName}\n")
+    wrapper.close()
+
+    os.system("chmod a+x gridpack_PdmV.sh")
+
+def prepareJDSFile():
+
+    jdsfile = open(f"gridpack_PdmV.jds", "w")
+    jdsfile.write("executable = gridpack_PdmV.sh\n")
+    jdsfile.write("transfer_input_files = cardsPdmV.tar.gz\n")
+    jdsfile.write("when_to_transfer_output = on_exit\n")
+    jdsfile.write("+JobFlavour = \"testmatch\"\n")
+    jdsfile.write(f"+JobBatchName = \"{datasetName}\"\n")
+    jdsfile.write(f"output = {datasetName}.stdout\n")
+    jdsfile.write(f"error = {datasetName}.stderr\n")
+    jdsfile.write(f"log = {datasetName}.stdlog\n")
+    jdsfile.write("queue\n")
+    jdsfile.close()
 
 def main():
 
     prepareRunCard()
     prepareCustomizeCard()
-#    prepareWrapper()
+    prepareWrapper()
+    prepareJDSFile()
 
 if __name__ == "__main__":
     main()
