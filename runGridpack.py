@@ -32,13 +32,25 @@ with open(campaignJson) as jsonFile:
 if not datasetPath.endswith("/"):
     datasetPath = f"{datasetPath}/"
 datasetName = datasetPath.rsplit("/", 2)[1]
-print (datasetName)
-generatorJson = os.path.join(datasetPath, f"{datasetName}.json")
-with open(generatorJson) as jsonFile:
-    generatorObject = json.load(jsonFile)
+
+datasetJson = os.path.join(datasetPath, f"{datasetName}.json")
+with open(datasetJson) as jsonFile:
+    datasetObject = json.load(jsonFile)
     jsonFile.close()
 
 os.system(f"mkdir {datasetName}")
+
+def prepareDefaultCard():
+
+    templateProccardPath = os.path.join(datasetPath, f"{datasetName}_proc_card.dat")
+    nb_core = datasetObject["nb_core"]
+
+    os.system(f"echo \"set nb_core {nb_core}\" > {datasetName}/{datasetName}_proc_card.dat")
+    os.system(f"cat {templateProccardPath} >> {datasetName}/{datasetName}_proc_card.dat")
+
+    templateMadspincardPath = os.path.join(datasetPath, f"{datasetName}_madspin_card.dat")
+    if os.path.exists(templateMadspincardPath):
+        os.system(f"cat {templateMadspincardPath} > {datasetName}/{datasetName}_madspin_card.dat")
 
 def prepareRunCard():
 
@@ -59,68 +71,76 @@ def prepareRunCard():
     os.system(f"sed -i 's|\$ebeam1|{beamEnergy}|g' {runcardPath}")
     os.system(f"sed -i 's|\$ebeam2|{beamEnergy}|g' {runcardPath}")
 
-    ickkw = generatorObject["run_card"]["ickkw"]
+    ickkw = datasetObject["run_card"]["ickkw"]
     os.system(f"sed -i 's|\$ickkw|{ickkw}|g' {runcardPath}")
 
-    maxjetflavor = generatorObject["run_card"]["maxjetflavor"]
+    maxjetflavor = datasetObject["run_card"]["maxjetflavor"]
     os.system(f"sed -i 's|\$maxjetflavor|{maxjetflavor}|g' {runcardPath}")
 
     if isNLO:
-        parton_shower = generatorObject["run_card"]["parton_shower"]
+        parton_shower = datasetObject["run_card"]["parton_shower"]
         os.system(f"sed -i 's|\$parton_shower|{parton_shower}|g' {runcardPath}")
     else:
-        xqcut = generatorObject["run_card"]["xqcut"]
+        xqcut = datasetObject["run_card"]["xqcut"]
         os.system(f"sed -i 's|\$xqcut|{xqcut}|g' {runcardPath}")
 
 def prepareCustomizeCard():
 
     customizecardPath = os.path.join(datasetName, f"{datasetName}_customizecards.dat")
 
-    schemeCard = generatorObject["scheme"]
+    schemeCard = datasetObject["scheme"]
     schemecardPath = os.path.join(templatePath, "scheme", schemeCard)
 
     os.system(f"cat {schemecardPath} > {customizecardPath}")
 
     os.system(f"echo \"\"  >> {customizecardPath}")
     os.system(f"echo \"# User settings\" >> {customizecardPath}")
-    for l in generatorObject["user"]:
+    for l in datasetObject["user"]:
         os.system(f"echo {l} >> {customizecardPath}")
 
 def prepareWrapper():
 
-    os.system(f"tar -czvf cardsPdmV.tar.gz {datasetName}")
+    os.system(f"tar -czvf cardsPdmV.tar.xz {datasetName}")
 
     wrapper = open("gridpack_PdmV.sh", "w")
 
     genproductions = campaignObject["genproductions"]
+    genproductionsLink = f"https://github.com/sihyunjeon/genproductions/archive/refs/tags/{genproductions}.tar.gz"
 
-    wrapper.write("#!/usr/bin/env bash")
-    wrapper.write(f"wget {genproductions}\n")
-    wrapper.write(f"tar -xvf {genproductions}\n")
-    wrapper.write("mv cardsPdmV.tar.gz genproductions/bin/MadGraph5_aMCatNLO/\n")
-    wrapper.write("cd genproductions/bin/MadGraph5_aMCatNLO/\n")
-    wrapper.write("tar -xvf cardsPdmV.tar.gz\n")
+    wrapper.write("#!/usr/bin/env bash\n")
+    wrapper.write(f"wget {genproductionsLink} \n")
+    wrapper.write(f"tar -xf {genproductions}.tar.gz\n")
+    wrapper.write(f"rm {genproductions}.tar.gz\n")
+    wrapper.write(f"mv cardsPdmV.tar.xz genproductions-{genproductions}/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write("rm cardsPdmV.tar.xz\n")
+    wrapper.write(f"cd genproductions-{genproductions}/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write("tar -xf cardsPdmV.tar.xz\n")
     wrapper.write(f"./gridpack_generation.sh {datasetName} {datasetName}\n")
+    wrapper.write(f"mv {datasetName}*.xz ../../../\n")
     wrapper.close()
 
     os.system("chmod a+x gridpack_PdmV.sh")
 
 def prepareJDSFile():
 
+    nb_core = datasetObject["nb_core"]
+
     jdsfile = open(f"gridpack_PdmV.jds", "w")
     jdsfile.write("executable = gridpack_PdmV.sh\n")
-    jdsfile.write("transfer_input_files = cardsPdmV.tar.gz\n")
+    jdsfile.write("transfer_input_files = cardsPdmV.tar.xz\n")
     jdsfile.write("when_to_transfer_output = on_exit\n")
     jdsfile.write("+JobFlavour = \"testmatch\"\n")
     jdsfile.write(f"+JobBatchName = \"{datasetName}\"\n")
     jdsfile.write(f"output = {datasetName}.stdout\n")
     jdsfile.write(f"error = {datasetName}.stderr\n")
     jdsfile.write(f"log = {datasetName}.stdlog\n")
+    jdsfile.write(f"RequestCpus = {nb_core}\n")
     jdsfile.write("queue\n")
     jdsfile.close()
 
 def main():
 
+    prepareDefaultCard()
     prepareRunCard()
     prepareCustomizeCard()
     prepareWrapper()

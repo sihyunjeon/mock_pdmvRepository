@@ -1,6 +1,6 @@
 {
 
-    "ncores": "20",
+    "nb_core": "20",
 
     "scheme": "massW.dat",
 
