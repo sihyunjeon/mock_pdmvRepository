@@ -2,7 +2,7 @@
 
     "nb_core": "20",
 
-    "scheme": "massW.dat",
+    "scheme": "massZ.dat",
 
     "run_card":{
         "parton_shower": "pythia8",
