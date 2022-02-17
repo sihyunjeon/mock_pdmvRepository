@@ -38,7 +38,7 @@ with open(datasetJson) as jsonFile:
     datasetObject = json.load(jsonFile)
     jsonFile.close()
 
-os.system(f"mkdir {datasetName}")
+os.system(f"mkdir -p {datasetName}")
 
 def prepareDefaultCard():
 
@@ -100,9 +100,9 @@ def prepareCustomizeCard():
 
 def prepareWrapper():
 
-    os.system(f"tar -czvf cardsPdmV.tar.xz {datasetName}")
+    os.system(f"tar -czvf cardsPdmV_{datasetName}.tar.xz {datasetName}")
 
-    wrapper = open("gridpack_PdmV.sh", "w")
+    wrapper = open(f"runPdmV_{datasetName}.sh", "w")
 
     genproductions = campaignObject["genproductions"]
     genproductionsLink = f"https://github.com/cms-sw/genproductions/archive/refs/tags/{genproductions}.tar.gz"
@@ -113,27 +113,27 @@ def prepareWrapper():
     wrapper.write(f"tar -xf {genproductions}.tar.gz\n")
     wrapper.write(f"rm {genproductions}.tar.gz\n")
     wrapper.write(f"mv genproductions-{genproductions} genproductions\n")
-    wrapper.write(f"mv cardsPdmV.tar.xz genproductions/bin/MadGraph5_aMCatNLO/\n")
-    wrapper.write("rm cardsPdmV.tar.xz\n")
+    wrapper.write(f"mv cardsPdmV_{datasetName}.tar.xz genproductions/bin/MadGraph5_aMCatNLO/\n")
+    wrapper.write(f"rm cardsPdmV_{datasetName}.tar.xz\n")
     wrapper.write("cd genproductions\n")
     wrapper.write("git init\n")
     wrapper.write(f"cd bin/MadGraph5_aMCatNLO/\n")
-    wrapper.write("tar -xf cardsPdmV.tar.xz\n")
-    wrapper.write("mkdir cardsPdmV\n")
+    wrapper.write(f"tar -xf cardsPdmV_{datasetName}.tar.xz\n")
+    wrapper.write("mkdir -p cardsPdmV\n")
     wrapper.write(f"mv {datasetName} cardsPdmV/\n")
     wrapper.write(f"./gridpack_generation.sh {datasetName} cardsPdmV/{datasetName}\n")
     wrapper.write(f"mv {datasetName}*.xz ../../../\n")
     wrapper.close()
 
-    os.system("chmod a+x gridpack_PdmV.sh")
+    os.system(f"chmod a+x runPdmV_{datasetName}.sh")
 
 def prepareJDSFile():
 
     nb_core = datasetObject["nb_core"]
 
-    jdsfile = open(f"gridpack_PdmV.jds", "w")
-    jdsfile.write("executable = gridpack_PdmV.sh\n")
-    jdsfile.write("transfer_input_files = cardsPdmV.tar.xz\n")
+    jdsfile = open(f"runPdmV_{datasetName}.jds", "w")
+    jdsfile.write(f"executable = runPdmV_{datasetName}.sh\n")
+    jdsfile.write(f"transfer_input_files = cardsPdmV_{datasetName}.tar.xz\n")
     jdsfile.write("when_to_transfer_output = on_exit\n")
     jdsfile.write("+JobFlavour = \"testmatch\"\n")
     jdsfile.write(f"+JobBatchName = \"{datasetName}\"\n")
@@ -152,6 +152,8 @@ def main():
     prepareCustomizeCard()
     prepareWrapper()
     prepareJDSFile()
+    os.system(f"rm -rf {datasetName}")
+    os.system(f"condor_submit runPdmV_{datasetName}.jds")
 
 if __name__ == "__main__":
     main()
