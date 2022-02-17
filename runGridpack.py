@@ -141,6 +141,7 @@ def prepareJDSFile():
     jdsfile.write(f"error = {datasetName}.stderr\n")
     jdsfile.write(f"log = {datasetName}.stdlog\n")
     jdsfile.write(f"RequestCpus = {nb_core}\n")
+    jdsfile.write(f"RequestMemory = 8000\n")
     jdsfile.write("queue\n")
     jdsfile.close()
 

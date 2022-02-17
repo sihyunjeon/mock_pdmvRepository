@@ -6,14 +6,12 @@
 
     "run_card":{
         "parton_shower": "pythia8",
-        "ickkw": "1",
-        "xqcut": "10",
+        "ickkw": "3",
         "maxjetflavor": "5"
     },
 
     "user":[
-        "set run_card mmll 50",
-        "set run_card ptj 10"
+        "set run_card ptj 10" 
     ],
 
     "fragment":[
