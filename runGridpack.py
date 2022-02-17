@@ -114,7 +114,6 @@ def prepareWrapper():
     wrapper.write(f"rm {genproductions}.tar.gz\n")
     wrapper.write(f"mv genproductions-{genproductions} genproductions\n")
     wrapper.write(f"mv cardsPdmV_{datasetName}.tar.xz genproductions/bin/MadGraph5_aMCatNLO/\n")
-    wrapper.write(f"rm cardsPdmV_{datasetName}.tar.xz\n")
     wrapper.write("cd genproductions\n")
     wrapper.write("git init\n")
     wrapper.write(f"cd bin/MadGraph5_aMCatNLO/\n")
@@ -141,7 +140,8 @@ def prepareJDSFile():
     jdsfile.write(f"error = {datasetName}.stderr\n")
     jdsfile.write(f"log = {datasetName}.stdlog\n")
     jdsfile.write(f"RequestCpus = {nb_core}\n")
-    jdsfile.write(f"RequestMemory = 8000\n")
+    jdsfile.write("RequestMemory = 8000\n")
+    jdsfile.write("should_transfer_files = yes\n")
     jdsfile.write("queue\n")
     jdsfile.close()
 
@@ -153,7 +153,7 @@ def main():
     prepareWrapper()
     prepareJDSFile()
     os.system(f"rm -rf {datasetName}")
-    os.system(f"condor_submit runPdmV_{datasetName}.jds")
+#   os.system(f"condor_submit runPdmV_{datasetName}.jds")
 
 if __name__ == "__main__":
     main()
