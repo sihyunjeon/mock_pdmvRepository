@@ -140,7 +140,7 @@ def prepareJDSFile():
     jdsfile.write(f"error = {datasetName}.stderr\n")
     jdsfile.write(f"log = {datasetName}.stdlog\n")
     jdsfile.write(f"RequestCpus = {nb_core}\n")
-    jdsfile.write("RequestMemory = 8000\n")
+    jdsfile.write("RequestMemory = 16000\n")
     jdsfile.write("should_transfer_files = yes\n")
     jdsfile.write("queue\n")
     jdsfile.close()
