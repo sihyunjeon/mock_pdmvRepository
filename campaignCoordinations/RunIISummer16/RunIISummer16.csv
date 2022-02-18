@@ -16,3 +16,4 @@ WW,LNuLNu,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
 WW,LNuQQ,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
 ZZ,inclusive,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
 TTJets,inclusive,amcatnloFXFX-pythia,1000000,MadGraph5_aMCatNLO
+DYJets,0J,madgraphMLM-pythia,1000000,MadGraph5_aMCatNLO
