@@ -105,7 +105,7 @@ def prepareWrapper():
     wrapper = open(f"runPdmV_{datasetName}.sh", "w")
 
     genproductions = campaignObject["genproductions"]
-    genproductionsLink = f"https://github.com/cms-sw/genproductions/archive/refs/tags/{genproductions}.tar.gz"
+    genproductionsLink = f"https://github.com/sihyunjeon/genproductions/archive/refs/tags/{genproductions}.tar.gz"
 
     wrapper.write("#!/usr/bin/env bash\n")
     wrapper.write("export HOME=`pwd`\n")
